@@ -29,4 +29,5 @@ bin/
 .DS_Store
 
 Backjoon.iml
-.idea/
+
+!/.idea/
