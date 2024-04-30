@@ -36,6 +36,7 @@ public class Main {
         for (int n : ans) {
             sb.append(n);
             count--;
+
             if (count >= 1) {
                 sb.append(", ");
             }
