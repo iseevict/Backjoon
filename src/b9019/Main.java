@@ -21,69 +21,85 @@ public class Main {
     }
 
     static int L(int left) {
-        if (left == 0) {
-            return 0;
-        }
-        String leftTempString = Integer.toString(left);
-        int leftLen = (int)Math.log10(left);
-        String leftS = "";
-        for (int i = 1; i < 4 - leftLen; i++) {
-            leftS += "0";
-        }
-        for (int j = 0; j <= leftLen; j++) {
-            leftS = leftS + leftTempString.charAt(j);
-        }
-        char[] tempCharArr = leftS.toCharArray();
-        for (int i = 0; i < 3; i++) {
-            char tempChar = tempCharArr[i];
-            tempCharArr[i] = tempCharArr[i + 1];
-            tempCharArr[i + 1] = tempChar;
-        }
-        leftS = "";
-        for (int i = 0; i <= 3; i++) {
-            leftS = leftS + tempCharArr[i];
-        }
-        left = Integer.parseInt(leftS);
+        left = (left * 10) % 10000 + (left / 1000);
         return left;
     }
 
     static int R(int left) {
-        if (left == 0) {
-            return 0;
-        }
-        String leftTempString = Integer.toString(left);
-        int leftLen = (int)Math.log10(left);
-        String leftS = "";
-        for (int i = 1; i < 4 - leftLen; i++) {
-            leftS += "0";
-        }
-        for (int j = 0; j <= leftLen; j++) {
-            leftS = leftS + leftTempString.charAt(j);
-        }
-        char[] tempCharArr = leftS.toCharArray();
-        for (int i = 3; i > 0; i--) {
-            char tempChar = tempCharArr[i];
-            tempCharArr[i] = tempCharArr[i - 1];
-            tempCharArr[i - 1] = tempChar;
-        }
-        leftS = "";
-        for (int i = 0; i <= 3; i++) {
-            leftS = leftS + tempCharArr[i];
-        }
-        left = Integer.parseInt(leftS);
+        left = (left / 10) + (left % 10) * 1000;
         return left;
+    }
+
+    static class map {
+        int value;
+        String list;
+
+        map(int n, String c) {
+            this.value = n;
+            this.list = c;
+        }
     }
 
     public static void main(String[] args) throws IOException {
         BufferedReader buf = new BufferedReader(new InputStreamReader(System.in));
         StringBuilder sb = new StringBuilder();
         T = Integer.parseInt(buf.readLine());
+        Loop1:
         while (T-- > 0) {
             StringTokenizer st = new StringTokenizer(buf.readLine());
             int left = Integer.parseInt(st.nextToken());
             int right = Integer.parseInt(st.nextToken());
-            int[] visit = new int[10000];
+            boolean[] visit = new boolean[10000];
+            Queue<map> que = new LinkedList<>();
+            String list = "";
+            que.add(new map(left, list));
+            visit[left] = true;
+
+            while (!que.isEmpty()) {
+                map m = que.poll();
+                int value = m.value;
+                String s = m.list;
+
+                if (value == right) {
+                    sb.append(s + "\n");
+                    continue Loop1;
+                }
+
+                int tempD = D(value);
+                int tempS = S(value);
+                int tempL = L(value);
+                int tempR = R(value);
+
+                if (!visit[tempD]) {
+                    String Ds = new String(s);
+                    Ds = Ds + "D";
+                    que.add(new map(tempD, Ds));
+                    visit[tempD] = true;
+                }
+
+                if (!visit[tempS]) {
+                    String Ss = new String(s);
+                    Ss = Ss + "S";
+                    que.add(new map(tempS, Ss));
+                    visit[tempS] = true;
+                }
+
+                if (!visit[tempL]) {
+                    String Ls = new String(s);
+                    Ls = Ls + "L";
+                    que.add(new map(tempL, Ls));
+                    visit[tempL] = true;
+                }
+
+                if (!visit[tempR]) {
+                    String Rs = new String(s);
+                    Rs = Rs + "R";
+                    que.add(new map(tempR, Rs));
+                    visit[tempR] = true;
+                }
+            }
         }
+        System.out.println(sb);
     }
 }
 
