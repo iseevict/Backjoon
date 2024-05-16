@@ -5,33 +5,39 @@ import java.util.*;
 
 public class Main {
     static int N, M;
-    static int[][][][] sum = new int[502][502][502][502];
     static int[][] value = new int[502][502];
-    static int ans = 0;
+    static boolean[][] visit = new boolean[502][502];
+    static int max = Integer.MIN_VALUE;
+    static int[] dx = {-1, 1, 0, 0};
+    static int[] dy = {0, 0, -1, 1};
 
-    static void run(int x, int y) {
-        // 0000 형태
-        if (x + 3 <= M) {
-            if (sum[x][x + 1][x + 2][x + 3] != 0) {
-                sum[x][x + 1][x + 2][x + 3] = value[x][y] + value[x + 1][y] + value[x + 2][y] + value[x + 3][y];
-                if (ans < sum[x][x + 1][x + 2][x + 3]) {
-                    ans = sum[x][x + 1][x + 2][x + 3];
-                }
-            }
+    static void run (int x, int y, int sum, int count) {
+        if (count == 4) {
+            max = Math.max(max, sum);
+            return;
         }
 
+        for (int i = 0; i < 4; i++) {
+            int xPos = x + dx[i];
+            int yPos = y + dy[i];
 
-        // 000  형태
-        // 0
+            if (xPos < 1 || xPos > M || yPos < 1 || yPos > N) {
+                continue;
+            }
 
-        // 00 형태
-        // 00
+            if (!visit[xPos][yPos]) {
 
-        // 000 형태
-        //  0
+                if (count == 2) {
+                    visit[xPos][yPos] = true;
+                    run(x, y, sum + value[xPos][yPos], count + 1);
+                    visit[xPos][yPos] = false;
+                }
 
-        // 00 형태
-        //  00
+                visit[xPos][yPos] = true;
+                run(xPos, yPos, sum + value[xPos][yPos], count + 1);
+                visit[xPos][yPos] = false;
+            }
+        }
     }
 
     public static void main(String[] args) throws IOException {
@@ -48,10 +54,12 @@ public class Main {
         }
         for (int i = 1; i <= N; i++) {
             for (int j = 1; j <= M; j++) {
-                run(j, i);
+                visit[j][i] = true;
+                run(j, i, value[j][i], 1);
+                visit[j][i] = false;
             }
         }
-        System.out.println(ans);
+        System.out.println(max);
     }
 }
 
